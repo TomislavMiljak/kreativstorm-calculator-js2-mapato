@@ -29,3 +29,45 @@ function divide(a, b) {
     }
     return a / b;
 }
+
+// Operate function to call the correct operator function
+function operate(operator, a, b) {
+    switch (operator) {
+        case '+': return add(a, b);
+        case '-': return subtract(a, b);
+        case '*': return multiply(a, b);
+        case '/': return divide(a, b);
+        case '%': return a % b; // Modulus operation
+        default: return b;
+    }
+}
+
+// Handle number and decimal input
+buttons.forEach(button => {
+    if (!button.classList.contains('operator') && button.innerHTML !== 'AC' && button.innerHTML !== 'DEL' && button.innerHTML !== '=') {
+        button.addEventListener('click', (e) => {
+            let value = e.target.innerHTML;
+            if (value === '.' && currentInput.includes('.')) return; // Prevent multiple decimal
+            currentInput += value;
+            updateDisplay();
+        });
+    }
+});
+
+// Handle operator input
+buttons.forEach(button => {
+    if (button.classList.contains('operator')) {
+        button.addEventListener('click', (e) => {
+            if (firstOperand === null) {
+                firstOperand = parseFloat(currentInput);
+            } else if (operator) {
+                secondOperand = parseFloat(currentInput);
+                firstOperand = operate(operator, firstOperand, secondOperand);
+                currentInput = firstOperand.toString();
+                updateDisplay();
+            }
+            operator = e.target.innerHTML;
+            currentInput = '';
+        });
+    }
+});
