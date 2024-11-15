@@ -13,6 +13,6 @@ A simple calculator built with HTML, CSS, and JavaScript to perform basic arithm
 4. Use `AC` to clear and `DEL` to delete the last input.
 
 ## Team Members:
--Malavika Sajith
--Tomislav Miljak
--Paulo Lopes
+- Malavika Sajith
+- Tomislav Miljak
+- Paulo Lopes
