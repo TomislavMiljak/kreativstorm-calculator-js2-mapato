@@ -71,3 +71,30 @@ buttons.forEach(button => {
         });
     }
 });
+// Handle equal button click
+document.querySelector('.equal').addEventListener('click', () => {
+    if (operator && firstOperand !== null) {
+        secondOperand = parseFloat(currentInput);
+        let result = operate(operator, firstOperand, secondOperand);
+        if (result === 'Error') {
+            currentInput = 'Cannot divide by 0';
+        } else {
+            currentInput = parseFloat(result.toFixed(10)).toString(); // Rounding long decimals
+        }
+        firstOperand = null;
+        secondOperand = null;
+        operator = null;
+        updateDisplay();
+    }
+});
+
+// Handle clear button
+document.querySelector('.clear').addEventListener('click', () => {
+    clearCalculator();
+});
+
+// Handle delete (backspace) button
+document.querySelector('.delete').addEventListener('click', () => {
+    currentInput = currentInput.slice(0, -1);
+    updateDisplay();
+});
