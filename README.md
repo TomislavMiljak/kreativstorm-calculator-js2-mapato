@@ -7,6 +7,9 @@ A simple calculator built with HTML, CSS, and JavaScript to perform basic arithm
 - Addition, subtraction, multiplication, division, and modulus.
 - Handles decimals and supports backspace.
 - Error message for division by zero.
+- It also has keyboard support.
+- you can type numbers from 0-9.
+- you can press backspace which is equivalent to 'DEL' in calculator and can press Esc which is equivalent to 'AC'.
 
 ## How to Use
 1. Open the `index.html` file in your browser or you can press the deployment
