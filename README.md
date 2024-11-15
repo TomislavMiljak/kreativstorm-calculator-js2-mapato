@@ -1,4 +1,6 @@
 ## Calculator 
+Preview Link: https://tomislavmiljak.github.io/kreativstorm-calculator-js2-mapato/ <br>
+
 A simple calculator built with HTML, CSS, and JavaScript to perform basic arithmetic operations.
 
 ## Features
