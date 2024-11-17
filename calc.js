@@ -1,33 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Input and button references
     const inputBox = document.getElementById("inputbox");
     const buttons = document.querySelectorAll("button");
 
+    // State variables
     let currentInput = "0";
     let firstOperand = null;
     let secondOperand = null;
     let currentOperator = null;
 
-    // Key event listener for keyboard inputs
-    document.addEventListener("keydown", handleKeyboardInput);
-
-    // Attach button event listeners
-    buttons.forEach(button => {
-        button.addEventListener("click", (event) => {
-            const buttonText = event.target.textContent;
-            if (buttonText === "=") {
-                calculateResult();
-            } else if (buttonText === "AC") {
-                clearDisplay();
-            } else if (buttonText === "DEL") {
-                backspace(); // Call the backspace function when DEL is clicked
-            } else if (["%", "/", "*", "-", "+", "."].includes(buttonText)) {
-                setOperator(buttonText);
-            } else {
-                appendNumber(buttonText);
-            }
-        });
-    });
-
+    // Keyboard input map
     const keyMap = {
         0: () => appendNumber("0"),
         1: () => appendNumber("1"),
@@ -44,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "-": () => setOperator("-"),
         "*": () => setOperator("*"),
         "/": () => setOperator("/"),
+        "%": () => setOperator("%"),
         Enter: calculateResult,
         "=": calculateResult,
         Escape: clearDisplay,
@@ -51,6 +34,24 @@ document.addEventListener("DOMContentLoaded", function () {
         Backspace: backspace,
     };
 
+    // Add keyboard event listener
+    document.addEventListener("keydown", handleKeyboardInput);
+
+    // Add click event listeners to buttons
+    buttons.forEach(button => {
+        button.addEventListener("click", (event) => {
+            const buttonText = event.target.textContent;
+
+            if (buttonText === "=") calculateResult();
+            else if (buttonText === "AC") clearDisplay();
+            else if (buttonText === "DEL") backspace();
+            else if (["+", "-", "*", "/", "%"].includes(buttonText)) setOperator(buttonText);
+            else if (buttonText === ".") appendDecimal();
+            else appendNumber(buttonText);
+        });
+    });
+
+    // Function to handle keyboard inputs
     function handleKeyboardInput(event) {
         if (keyMap[event.key]) {
             event.preventDefault();
@@ -58,15 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function backspace() {
-        if (currentInput.length > 1) {
-            currentInput = currentInput.slice(0, -1); // Remove the last character
-        } else {
-            currentInput = "0"; // Reset to 0 if no characters left
-        }
-        updateDisplay();
-    }
-
+    // Helper functions for calculator operations
     function add(a, b) {
         return a + b;
     }
@@ -80,47 +73,45 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function divide(a, b) {
-        if (b === 0) {
-            return "Cannot divide by 0";
-        }
-        return a / b;
+        return b === 0 ? "Cannot divide by 0" : a / b;
+    }
+
+    function modulo(a, b) {
+        return b === 0 ? "Cannot divide by 0" : a % b;
     }
 
     function operate(operator, a, b) {
         switch (operator) {
-            case "+":
-                return add(a, b);
-            case "-":
-                return subtract(a, b);
-            case "*":
-                return multiply(a, b);
-            case "/":
-                return divide(a, b);
-            default:
-                return "Error: Unknown operator";
+            case "+": return add(a, b);
+            case "-": return subtract(a, b);
+            case "*": return multiply(a, b);
+            case "/": return divide(a, b);
+            case "%": return modulo(a, b);
+            default: return "Error: Invalid Operator";
         }
     }
 
+    // Display update function
     function updateDisplay() {
         inputBox.value = currentInput;
     }
 
+    // Number appending
     function appendNumber(number) {
-        if (currentInput === "0") {
-            currentInput = number.toString();
-        } else {
-            currentInput += number.toString();
-        }
+        currentInput = currentInput === "0" ? number : currentInput + number;
         updateDisplay();
     }
 
+    // Decimal appending
     function appendDecimal() {
-        if (!currentInput.includes(".")) {
-            currentInput += ".";
-            updateDisplay();
-        }
+        if (currentInput === "0") {
+            currentInput = "0."; // Start with "0." if input is empty or "0"
+            } else if (!currentInput.includes(".")) {
+                currentInput += "."; // Append "." only if it doesn't already exist
+                }
+                updateDisplay();
     }
-
+    // Clear the display
     function clearDisplay() {
         currentInput = "0";
         firstOperand = null;
@@ -129,32 +120,36 @@ document.addEventListener("DOMContentLoaded", function () {
         updateDisplay();
     }
 
+    // Handle backspace
+    function backspace() {
+        currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : "0";
+        updateDisplay();
+    }
+
+    // Set the operator and handle calculations
     function setOperator(operator) {
         if (firstOperand === null) {
-            firstOperand = parseFloat(currentInput); // Set first operand on first operator input
+            firstOperand = parseFloat(currentInput);
         } else if (currentOperator) {
-            secondOperand = parseFloat(currentInput);
-            firstOperand = operate(currentOperator, firstOperand, secondOperand); // Perform previous operation
+            calculateResult();
         }
 
         currentOperator = operator;
-        currentInput = "0"; // Reset the input for the next number
+        currentInput = "0";
     }
 
+    // Calculate and display the result
     function calculateResult() {
         if (currentOperator && firstOperand !== null) {
             secondOperand = parseFloat(currentInput);
-            let result = operate(currentOperator, firstOperand, secondOperand);
+            const result = operate(currentOperator, firstOperand, secondOperand);
 
-            if (typeof result === "string") {
-                currentInput = result; // Show the error message if the result is a string
+            if (typeof result === "string") { // Handle errors like division by zero
+                currentInput = result;
                 updateDisplay();
-
-                setTimeout(() => {
-                    clearDisplay(); // Clear after the error message timeout
-                }, 1000);
+                setTimeout(clearDisplay, 3000); // Clear display after 3 seconds
             } else {
-                currentInput = parseFloat(result.toFixed(4)).toString(); // Convert result to string
+                currentInput = parseFloat(result.toFixed(10)).toString(); // Precision adjustment
                 firstOperand = parseFloat(currentInput);
                 currentOperator = null;
                 updateDisplay();
