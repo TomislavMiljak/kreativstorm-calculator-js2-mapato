@@ -11,27 +11,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Keyboard input map
     const keyMap = {
-        0: () => appendNumber("0"),
-        1: () => appendNumber("1"),
-        2: () => appendNumber("2"),
-        3: () => appendNumber("3"),
-        4: () => appendNumber("4"),
-        5: () => appendNumber("5"),
-        6: () => appendNumber("6"),
-        7: () => appendNumber("7"),
-        8: () => appendNumber("8"),
-        9: () => appendNumber("9"),
+        "0": () => appendNumber("0"),
+        "1": () => appendNumber("1"),
+        "2": () => appendNumber("2"),
+        "3": () => appendNumber("3"),
+        "4": () => appendNumber("4"),
+        "5": () => appendNumber("5"),
+        "6": () => appendNumber("6"),
+        "7": () => appendNumber("7"),
+        "8": () => appendNumber("8"),
+        "9": () => appendNumber("9"),
         ".": appendDecimal,
         "+": () => setOperator("+"),
         "-": () => setOperator("-"),
         "*": () => setOperator("*"),
         "/": () => setOperator("/"),
         "%": () => setOperator("%"),
-        Enter: calculateResult,
+        "Enter": calculateResult,
         "=": calculateResult,
-        Escape: clearDisplay,
-        c: clearDisplay,
-        Backspace: backspace,
+        "Escape": clearDisplay,
+        "c": clearDisplay,
+        "Backspace": backspace,
     };
 
     // Add keyboard event listener
@@ -59,7 +59,65 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Helper functions for calculator operations
+    // Helper functions
+    function updateDisplay() {
+        inputBox.value = currentInput;
+    }
+
+    function appendNumber(number) {
+        currentInput = currentInput === "0" ? number : currentInput + number;
+        updateDisplay();
+    }
+
+    function appendDecimal() {
+        if (!currentInput.includes(".")) {
+            currentInput += ".";
+            updateDisplay();
+        }
+    }
+
+    function clearDisplay() {
+        currentInput = "0";
+        firstOperand = null;
+        secondOperand = null;
+        currentOperator = null;
+        updateDisplay();
+    }
+
+    function backspace() {
+        currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : "0";
+        updateDisplay();
+    }
+
+    function setOperator(operator) {
+        if (firstOperand === null) {
+            firstOperand = parseFloat(currentInput);
+        } else if (currentOperator) {
+            calculateResult();
+        }
+
+        currentOperator = operator;
+        currentInput = "0";
+    }
+
+    function calculateResult() {
+        if (currentOperator && firstOperand !== null) {
+            secondOperand = parseFloat(currentInput);
+            const result = operate(currentOperator, firstOperand, secondOperand);
+
+            if (typeof result === "string") { // Handle errors like division by zero
+                currentInput = result;
+                updateDisplay();
+                setTimeout(clearDisplay, 3000); // Clear display after 3 seconds
+            } else {
+                currentInput = parseFloat(result.toFixed(10)).toString(); // Precision adjustment
+                firstOperand = parseFloat(currentInput);
+                currentOperator = null;
+                updateDisplay();
+            }
+        }
+    }
+
     function add(a, b) {
         return a + b;
     }
@@ -88,72 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
             case "/": return divide(a, b);
             case "%": return modulo(a, b);
             default: return "Error: Invalid Operator";
-        }
-    }
-
-    // Display update function
-    function updateDisplay() {
-        inputBox.value = currentInput;
-    }
-
-    // Number appending
-    function appendNumber(number) {
-        currentInput = currentInput === "0" ? number : currentInput + number;
-        updateDisplay();
-    }
-
-    // Decimal appending
-    function appendDecimal() {
-        if (currentInput === "0") {
-            currentInput = "0."; // Start with "0." if input is empty or "0"
-            } else if (!currentInput.includes(".")) {
-                currentInput += "."; // Append "." only if it doesn't already exist
-                }
-                updateDisplay();
-    }
-    // Clear the display
-    function clearDisplay() {
-        currentInput = "0";
-        firstOperand = null;
-        secondOperand = null;
-        currentOperator = null;
-        updateDisplay();
-    }
-
-    // Handle backspace
-    function backspace() {
-        currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : "0";
-        updateDisplay();
-    }
-
-    // Set the operator and handle calculations
-    function setOperator(operator) {
-        if (firstOperand === null) {
-            firstOperand = parseFloat(currentInput);
-        } else if (currentOperator) {
-            calculateResult();
-        }
-
-        currentOperator = operator;
-        currentInput = "0";
-    }
-
-    // Calculate and display the result
-    function calculateResult() {
-        if (currentOperator && firstOperand !== null) {
-            secondOperand = parseFloat(currentInput);
-            const result = operate(currentOperator, firstOperand, secondOperand);
-
-            if (typeof result === "string") { // Handle errors like division by zero
-                currentInput = result;
-                updateDisplay();
-                setTimeout(clearDisplay, 3000); // Clear display after 3 seconds
-            } else {
-                currentInput = parseFloat(result.toFixed(10)).toString(); // Precision adjustment
-                firstOperand = parseFloat(currentInput);
-                currentOperator = null;
-                updateDisplay();
-            }
         }
     }
 });
