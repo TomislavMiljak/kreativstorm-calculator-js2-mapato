@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     const inputBox = document.getElementById("inputbox");
     const buttons = document.querySelectorAll("button");
@@ -7,10 +8,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let secondOperand = null;
     let currentOperator = null;
 
-    // Key event listener for keyboard inputs
+    
     document.addEventListener("keydown", handleKeyboardInput);
 
-    // Attach button event listeners
+    
     buttons.forEach(button => {
         button.addEventListener("click", (event) => {
             const buttonText = event.target.textContent;
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (buttonText === "AC") {
                 clearDisplay();
             } else if (buttonText === "DEL") {
-                backspace(); // Call the backspace function when DEL is clicked
+                backspace(); 
             } else if (["%", "/", "*", "-", "+", "."].includes(buttonText)) {
                 setOperator(buttonText);
             } else {
@@ -60,9 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function backspace() {
         if (currentInput.length > 1) {
-            currentInput = currentInput.slice(0, -1); // Remove the last character
+            currentInput = currentInput.slice(0, -1); 
         } else {
-            currentInput = "0"; // Reset to 0 if no characters left
+            currentInput = "0"; 
         }
         updateDisplay();
     }
@@ -131,14 +132,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function setOperator(operator) {
         if (firstOperand === null) {
-            firstOperand = parseFloat(currentInput); // Set first operand on first operator input
+            firstOperand = parseFloat(currentInput); 
         } else if (currentOperator) {
             secondOperand = parseFloat(currentInput);
-            firstOperand = operate(currentOperator, firstOperand, secondOperand); // Perform previous operation
+            firstOperand = operate(currentOperator, firstOperand, secondOperand); 
         }
 
         currentOperator = operator;
-        currentInput = "0"; // Reset the input for the next number
+        currentInput = "0"; 
     }
 
     function calculateResult() {
@@ -147,18 +148,16 @@ document.addEventListener("DOMContentLoaded", function () {
             let result = operate(currentOperator, firstOperand, secondOperand);
 
             if (typeof result === "string") {
-                currentInput = result; // Show the error message if the result is a string
+                currentInput = result; 
                 updateDisplay();
 
                 setTimeout(() => {
-                    clearDisplay(); // Clear after the error message timeout
+                    clearDisplay(); 
                 }, 1000);
             } else {
-                currentInput = parseFloat(result.toFixed(4)).toString(); // Convert result to string
+                currentInput = parseFloat(result.toFixed(4)).toString(); 
                 firstOperand = parseFloat(currentInput);
                 currentOperator = null;
                 updateDisplay();
             }
         }
-    }
-});
