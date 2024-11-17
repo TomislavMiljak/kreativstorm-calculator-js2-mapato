@@ -1,168 +1,163 @@
-let input = document.getElementById('inputbox');
-let buttons = document.querySelectorAll('button');
-let currentInput = '';
-let firstOperand = null;
-let secondOperand = null;
-let operator = null;
-let isOperatorClicked = false; // To prevent multiple operators input without numbers
 
-// Update the display
-function updateDisplay() {
-    input.value = currentInput || '0';
-}
+document.addEventListener("DOMContentLoaded", function () {
+    const inputBox = document.getElementById("inputbox");
+    const buttons = document.querySelectorAll("button");
 
-// Clear everything
-function clearCalculator() {
-    currentInput = '';
-    firstOperand = null;
-    secondOperand = null;
-    operator = null;
-    isOperatorClicked = false;
-    updateDisplay();
-}
+    let currentInput = "0";
+    let firstOperand = null;
+    let secondOperand = null;
+    let currentOperator = null;
 
-// Perform basic operations
-function add(a, b) { return a + b; }
-function subtract(a, b) { return a - b; }
-function multiply(a, b) { return a * b; }
-function divide(a, b) {
-    if (b === 0) {
-        return 'Error';
-    }
-    return a / b;
-}
+    
+    document.addEventListener("keydown", handleKeyboardInput);
 
-// Operate function to call the correct operator function
-function operate(operator, a, b) {
-    switch (operator) {
-        case '+': return add(a, b);
-        case '-': return subtract(a, b);
-        case '*': return multiply(a, b);
-        case '/': return divide(a, b);
-        case '%': return a % b; // Modulus operation
-        default: return b;
-    }
-}
-
-// Handle number and decimal input
-buttons.forEach(button => {
-    if (!button.classList.contains('operator') && button.innerHTML !== 'AC' && button.innerHTML !== 'DEL' && button.innerHTML !== '=') {
-        button.addEventListener('click', (e) => {
-            let value = e.target.innerHTML;
-            if (value === '.' && currentInput.includes('.')) return; // Prevent multiple decimals
-            if (isOperatorClicked) {
-                currentInput = value; // Start new input after an operator
-                isOperatorClicked = false;
+    
+    buttons.forEach(button => {
+        button.addEventListener("click", (event) => {
+            const buttonText = event.target.textContent;
+            if (buttonText === "=") {
+                calculateResult();
+            } else if (buttonText === "AC") {
+                clearDisplay();
+            } else if (buttonText === "DEL") {
+                backspace(); 
+            } else if (["%", "/", "*", "-", "+", "."].includes(buttonText)) {
+                setOperator(buttonText);
             } else {
-                currentInput += value;
+                appendNumber(buttonText);
             }
-            updateDisplay();
         });
+    });
+
+    const keyMap = {
+        0: () => appendNumber("0"),
+        1: () => appendNumber("1"),
+        2: () => appendNumber("2"),
+        3: () => appendNumber("3"),
+        4: () => appendNumber("4"),
+        5: () => appendNumber("5"),
+        6: () => appendNumber("6"),
+        7: () => appendNumber("7"),
+        8: () => appendNumber("8"),
+        9: () => appendNumber("9"),
+        ".": appendDecimal,
+        "+": () => setOperator("+"),
+        "-": () => setOperator("-"),
+        "*": () => setOperator("*"),
+        "/": () => setOperator("/"),
+        Enter: calculateResult,
+        "=": calculateResult,
+        Escape: clearDisplay,
+        c: clearDisplay,
+        Backspace: backspace,
+    };
+
+    function handleKeyboardInput(event) {
+        if (keyMap[event.key]) {
+            event.preventDefault();
+            keyMap[event.key]();
+        }
     }
-});
 
-// Handle operator input
-buttons.forEach(button => {
-    if (button.classList.contains('operator')) {
-        button.addEventListener('click', (e) => {
-            if (currentInput === '') return; // Prevent operator if no number is entered
-            if (firstOperand === null) {
-                firstOperand = parseFloat(currentInput);
-            } else if (operator) {
-                secondOperand = parseFloat(currentInput);
-                firstOperand = operate(operator, firstOperand, secondOperand);
-                currentInput = firstOperand.toString();
-                updateDisplay();
-            }
-            operator = e.target.innerHTML;
-            currentInput = '';
-            isOperatorClicked = true; // Flag to avoid entering multiple operators
-        });
-    }
-});
-
-// Handle equal button click
-document.querySelector('.equal').addEventListener('click', () => {
-    if (currentInput === '' || operator === null) return; // Prevent equal without valid input
-    secondOperand = parseFloat(currentInput);
-    let result = operate(operator, firstOperand, secondOperand);
-    if (result === 'Error') {
-        currentInput = 'Cannot divide by 0';
-    } else {
-        currentInput = parseFloat(result.toFixed(10)).toString(); // Rounding long decimals
-    }
-    firstOperand = null;
-    secondOperand = null;
-    operator = null;
-    updateDisplay();
-});
-
-// Handle clear button
-document.querySelector('.clear').addEventListener('click', () => {
-    clearCalculator();
-});
-
-// Handle delete (backspace) button
-document.querySelector('.delete').addEventListener('click', () => {
-    currentInput = currentInput.slice(0, -1);
-    updateDisplay();
-});
-
-// Keyboard support for calculator
-document.addEventListener('keydown', (e) => {
-    if (e.key >= '0' && e.key <= '9') {
-        let value = e.key;
-        if (isOperatorClicked) {
-            currentInput = value;
-            isOperatorClicked = false;
+    function backspace() {
+        if (currentInput.length > 1) {
+            currentInput = currentInput.slice(0, -1); 
         } else {
-            currentInput += value;
+            currentInput = "0"; 
         }
         updateDisplay();
     }
 
-    if (e.key === '.') {
-        if (currentInput.includes('.')) return;
-        currentInput += '.';
+    function add(a, b) {
+        return a + b;
+    }
+
+    function subtract(a, b) {
+        return a - b;
+    }
+
+    function multiply(a, b) {
+        return a * b;
+    }
+
+    function divide(a, b) {
+        if (b === 0) {
+            return "Cannot divide by 0";
+        }
+        return a / b;
+    }
+
+    function operate(operator, a, b) {
+        switch (operator) {
+            case "+":
+                return add(a, b);
+            case "-":
+                return subtract(a, b);
+            case "*":
+                return multiply(a, b);
+            case "/":
+                return divide(a, b);
+            default:
+                return "Error: Unknown operator";
+        }
+    }
+
+    function updateDisplay() {
+        inputBox.value = currentInput;
+    }
+
+    function appendNumber(number) {
+        if (currentInput === "0") {
+            currentInput = number.toString();
+        } else {
+            currentInput += number.toString();
+        }
         updateDisplay();
     }
 
-    if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
-        if (currentInput === '') return; // Prevent operator if no number is entered
-        if (firstOperand === null) {
-            firstOperand = parseFloat(currentInput);
-        } else if (operator) {
-            secondOperand = parseFloat(currentInput);
-            firstOperand = operate(operator, firstOperand, secondOperand);
-            currentInput = firstOperand.toString();
+    function appendDecimal() {
+        if (!currentInput.includes(".")) {
+            currentInput += ".";
             updateDisplay();
         }
-        operator = e.key;
-        currentInput = '';
-        isOperatorClicked = true;
     }
 
-    if (e.key === 'Enter') {
-        if (currentInput === '' || operator === null) return; // Prevent equal without valid input
-        secondOperand = parseFloat(currentInput);
-        let result = operate(operator, firstOperand, secondOperand);
-        if (result === 'Error') {
-            currentInput = 'Cannot divide by 0';
-        } else {
-            currentInput = parseFloat(result.toFixed(10)).toString();
-        }
+    function clearDisplay() {
+        currentInput = "0";
         firstOperand = null;
         secondOperand = null;
-        operator = null;
+        currentOperator = null;
         updateDisplay();
     }
 
-    if (e.key === 'Backspace') {
-        currentInput = currentInput.slice(0, -1);
-        updateDisplay();
+    function setOperator(operator) {
+        if (firstOperand === null) {
+            firstOperand = parseFloat(currentInput); 
+        } else if (currentOperator) {
+            secondOperand = parseFloat(currentInput);
+            firstOperand = operate(currentOperator, firstOperand, secondOperand); 
+        }
+
+        currentOperator = operator;
+        currentInput = "0"; 
     }
 
-    if (e.key === 'Escape') { // Clear on 'Esc'
-        clearCalculator();
-    }
-});
+    function calculateResult() {
+        if (currentOperator && firstOperand !== null) {
+            secondOperand = parseFloat(currentInput);
+            let result = operate(currentOperator, firstOperand, secondOperand);
+
+            if (typeof result === "string") {
+                currentInput = result; 
+                updateDisplay();
+
+                setTimeout(() => {
+                    clearDisplay(); 
+                }, 1000);
+            } else {
+                currentInput = parseFloat(result.toFixed(4)).toString(); 
+                firstOperand = parseFloat(currentInput);
+                currentOperator = null;
+                updateDisplay();
+            }
+        }
