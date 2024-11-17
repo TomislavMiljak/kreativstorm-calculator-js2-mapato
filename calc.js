@@ -61,15 +61,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Helper functions
     function updateDisplay() {
-        inputBox.value = currentInput;
+        inputBox.value = currentInput; // Update input box with the current input
     }
 
     function appendNumber(number) {
+        // If the current input is "0", replace it with the number; otherwise, append the number
         currentInput = currentInput === "0" ? number : currentInput + number;
         updateDisplay();
     }
 
     function appendDecimal() {
+        // Append a decimal point only if it doesn't already exist in the input
         if (!currentInput.includes(".")) {
             currentInput += ".";
             updateDisplay();
@@ -77,6 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function clearDisplay() {
+        // Reset the state variables and the display
         currentInput = "0";
         firstOperand = null;
         secondOperand = null;
@@ -85,11 +88,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function backspace() {
+        // Remove the last character from the input
         currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : "0";
         updateDisplay();
     }
 
     function setOperator(operator) {
+        // Set the operator and store the first operand if it’s not already set
         if (firstOperand === null) {
             firstOperand = parseFloat(currentInput);
         } else if (currentOperator) {
@@ -97,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         currentOperator = operator;
-        currentInput = "0";
+        currentInput = "0"; // Reset input for the second operand
     }
 
     function calculateResult() {
@@ -118,6 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Basic arithmetic functions
     function add(a, b) {
         return a + b;
     }
