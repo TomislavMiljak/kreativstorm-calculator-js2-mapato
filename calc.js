@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 updateDisplay();
                 setTimeout(clearDisplay, 3000); // Clear display after 3 seconds
             } else {
-                currentInput = parseFloat(result.toFixed(10)).toString(); // Precision adjustment
+                currentInput = parseFloat(result.toFixed(4)).toString(); // Precision adjustment
                 firstOperand = parseFloat(currentInput);
                 currentOperator = null;
                 updateDisplay();
