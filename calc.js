@@ -7,10 +7,10 @@ document.addEventListener("DOMContentLoaded", function () {
   let secondOperand = null;
   let currentOperator = null;
 
-  // Key event listener for keyboard inputs
+  
   document.addEventListener("keydown", handleKeyboardInput);
 
-  // Attach button event listeners
+  
   buttons.forEach(button => {
     button.addEventListener("click", (event) => {
       const buttonText = event.target.textContent;
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function modulo(a, b) {
       if (b === 0) {
-          return "Cannot divide by 0"; // Handle division by zero
+          return "Cannot divide by 0"; 
       }
       return a % b;
   }
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
           case "/":
               return divide(a, b);
           case "%":
-              return modulo(a, b);  // Add modulo operator
+              return modulo(a, b);  
           default:
               return "Error: Unknown operator";
       }
@@ -132,19 +132,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function setOperator(operator) {
     if (firstOperand === null) {
-        // Initialize the first operand
+        
         firstOperand = parseFloat(currentInput);
     } else if (currentOperator && currentInput !== "0") {
-        // Calculate intermediate result when a second operator is entered
+        
         secondOperand = parseFloat(currentInput);
         firstOperand = operate(currentOperator, firstOperand, secondOperand);
-        currentInput = firstOperand.toString(); // Update display with intermediate result
+        currentInput = firstOperand.toString(); 
         updateDisplay();
     }
 
-    // Update the current operator
+    
     currentOperator = operator;
-    currentInput = "0"; // Reset input for the next operand
+    currentInput = "0"; 
   }
 
 
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
         clearDisplay(); 
       }, 1000);
     } else {
-      currentInput = parseFloat(result.toPrecision(10)).toString();
+      currentInput = parseFloat(result.toPrecision(4)).toString();
       firstOperand = parseFloat(currentInput);
       currentOperator = null;
       updateDisplay();
