@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
         clearDisplay(); 
       }, 1000);
     } else {
-      currentInput = parseFloat(result.toPrecision(4)).toString();
+      currentInput = parseFloat(result.toFixed(4)).toString();
       firstOperand = parseFloat(currentInput);
       currentOperator = null;
       updateDisplay();
