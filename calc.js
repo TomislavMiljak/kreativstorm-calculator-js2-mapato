@@ -94,34 +94,35 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function setOperator(operator) {
-        
         if (firstOperand === null) {
             firstOperand = parseFloat(currentInput);
         } else if (currentOperator) {
-            calculateResult();
+            secondOperand = parseFloat(currentInput);
+            firstOperand = operate(currentOperator, firstOperand, secondOperand);
+            currentInput = firstOperand.toString();
+            updateDisplay();
         }
-
         currentOperator = operator;
-        currentInput = "0"; 
+        currentInput = "0"; // 
     }
-
+    
     function calculateResult() {
         if (currentOperator && firstOperand !== null) {
             secondOperand = parseFloat(currentInput);
             const result = operate(currentOperator, firstOperand, secondOperand);
-
             if (typeof result === "string") { 
                 currentInput = result;
                 updateDisplay();
                 setTimeout(clearDisplay, 3000); 
             } else {
                 currentInput = parseFloat(result.toFixed(4)).toString(); 
-                firstOperand = parseFloat(currentInput);
-                currentOperator = null;
+                firstOperand = parseFloat(currentInput); 
+                currentOperator = null; 
                 updateDisplay();
             }
         }
     }
+
 
     
     function add(a, b) {
